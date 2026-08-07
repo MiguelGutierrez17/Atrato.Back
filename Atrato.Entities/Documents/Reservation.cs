@@ -25,6 +25,8 @@ public class Reservation
     public DateTime EndDate { get; set; }
     [Required]
     public Guid WorkStationId { get; set; }
+    [ForeignKey(nameof(WorkStationId))]
+    public WorkStation WorkStation { get; set; }
     [Required]
     public bool CancelByExpireTime { get; set; }
     [Required]

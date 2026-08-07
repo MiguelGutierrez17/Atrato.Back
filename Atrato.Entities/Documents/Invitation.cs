@@ -13,7 +13,15 @@ public class Invitation
     [ForeignKey(nameof(UserId))]
     public User User { get; set; }
     [Required]
-    public int Code { get; set; }
+    [MaxLength(6)]
+    public string Code { get; set; }
     [Required]
     public bool State { get; set; }
+    [Required]
+    public int NumberAttempts { get; set; }
+    [Required]
+    public DateTime CreationDate { get; set; }
+    [Required]
+    public DateTime ExpirationDate { get; set; }
+    public DateTime? UsedAt { get; set; }
 }

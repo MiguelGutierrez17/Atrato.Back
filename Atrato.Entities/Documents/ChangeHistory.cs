@@ -26,6 +26,8 @@ public class ChangeHistory
     public string NewValue { get; set; }
     [Required]
     public Guid ActionUser { get; set; }
+    [ForeignKey(nameof(ActionUser))]
+    public User User { get; set; }
     [Required]
     public DateTime ActionDate { get; set; }
     [Required]

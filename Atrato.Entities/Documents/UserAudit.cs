@@ -13,7 +13,7 @@ public class UserAudit
     public string Initials { get; set; }
     public string Email { get; set; }
     public string Phone { get; set; }
-    public string State { get; set; }
+    public bool State { get; set; }
     public bool isSuperAdmin { get; set; }
     public Guid ItemId { get; set; }
     public Guid UserChange { get; set; }

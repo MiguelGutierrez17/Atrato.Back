@@ -137,6 +137,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ActionUser");
+
                     b.HasIndex("EnterpriseId");
 
                     b.HasIndex("EntityTypeId");
@@ -366,11 +368,25 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Code")
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NumberAttempts")
                         .HasColumnType("int");
 
                     b.Property<bool>("State")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -397,7 +413,7 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     b.Property<Guid>("EnterpriseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FileId")
+                    b.Property<Guid?>("FileId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("StartDate")
@@ -413,6 +429,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     b.HasKey("Id");
 
                     b.HasIndex("EnterpriseId");
+
+                    b.HasIndex("FileId");
 
                     b.ToTable("News");
                 });
@@ -505,7 +523,7 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ExpiredAt")
+                    b.Property<DateTime?>("ExpiredAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Token")
@@ -985,6 +1003,12 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
 
             modelBuilder.Entity("Atrato.Entities.Documents.ChangeHistory", b =>
                 {
+                    b.HasOne("Atrato.Entities.Documents.User", "User")
+                        .WithMany("ChangesHistory")
+                        .HasForeignKey("ActionUser")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Atrato.Entities.Documents.Enterprise", "Enterprise")
                         .WithMany()
                         .HasForeignKey("EnterpriseId")
@@ -1006,6 +1030,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     b.Navigation("Enterprise");
 
                     b.Navigation("EntityType");
+
+                    b.Navigation("User");
 
                     b.Navigation("UserAction");
                 });
@@ -1100,7 +1126,14 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Atrato.Entities.Documents.FileDb", "FileDb")
+                        .WithMany("News")
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Enterprise");
+
+                    b.Navigation("FileDb");
                 });
 
             modelBuilder.Entity("Atrato.Entities.Documents.Notification", b =>
@@ -1161,11 +1194,19 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Atrato.Entities.Documents.WorkStation", "WorkStation")
+                        .WithMany("Reservations")
+                        .HasForeignKey("WorkStationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("ReservationState");
 
                     b.Navigation("ReservationType");
 
                     b.Navigation("User");
+
+                    b.Navigation("WorkStation");
                 });
 
             modelBuilder.Entity("Atrato.Entities.Documents.Rol", b =>
@@ -1360,6 +1401,11 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     b.Navigation("Notifications");
                 });
 
+            modelBuilder.Entity("Atrato.Entities.Documents.FileDb", b =>
+                {
+                    b.Navigation("News");
+                });
+
             modelBuilder.Entity("Atrato.Entities.Documents.ReservationState", b =>
                 {
                     b.Navigation("Reservations");
@@ -1382,6 +1428,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
 
             modelBuilder.Entity("Atrato.Entities.Documents.User", b =>
                 {
+                    b.Navigation("ChangesHistory");
+
                     b.Navigation("ErrorsHistory");
 
                     b.Navigation("Invitations");
@@ -1404,6 +1452,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
 
             modelBuilder.Entity("Atrato.Entities.Documents.WorkStation", b =>
                 {
+                    b.Navigation("Reservations");
+
                     b.Navigation("Tickets");
                 });
 

@@ -26,4 +26,5 @@ public class FileDb
     [Required]
     public bool State { get; set; }
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+    public ICollection<News> News { get; set; } = new List<News>();
 }

@@ -225,7 +225,7 @@ namespace Atrato.Entities.Migrations.AtratoAuditMigrations
                     b.Property<Guid>("EnterpriseId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FileId")
+                    b.Property<Guid?>("FileId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ItemId")
@@ -483,9 +483,8 @@ namespace Atrato.Entities.Migrations.AtratoAuditMigrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("State")
+                        .HasColumnType("bit");
 
                     b.Property<Guid>("UserChange")
                         .HasColumnType("uniqueidentifier");

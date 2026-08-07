@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Atrato.Api.Controllers;
 
 [ApiController]
-[Route("{EnterpriseId:int}/{UserId:int}/[controller]")]
+[Route("{EnterpriseId:Guid}/{UserId:Guid}/[controller]")]
 public class EnterpriseController : ControllerBase
 {
     private readonly IEnterpriseService _service;
@@ -21,6 +21,14 @@ public class EnterpriseController : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var response = await _service.GetAll(cancellationToken);
+        return Ok(response);
+    }
+
+    [Authorize]
+    [HttpGet("ById/{id:Guid}")]
+    public async Task<IActionResult> ById(Guid id, CancellationToken cancellationToken)
+    {
+        var response = await _service.ById(id, cancellationToken);
         return Ok(response);
     }
 

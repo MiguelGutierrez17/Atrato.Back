@@ -33,7 +33,7 @@ public class EnterpriseService : IEnterpriseService
         };
     }
 
-    public async Task<StandardResult<EnterpriseQueryData?>> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<StandardResult<EnterpriseQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
         var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
 

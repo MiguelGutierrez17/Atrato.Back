@@ -28,6 +28,7 @@ public class WorkStation
     [Required]
     public int PositionY { get; set; }
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+    public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     public ICollection<User> Users { get; set; } = new List<User>();
     public ICollection<Rol> Roles { get; set; } = new List<Rol>();
 }

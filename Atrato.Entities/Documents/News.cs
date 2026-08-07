@@ -12,7 +12,9 @@ public class News
     [Required]
     public string Title { get; set; }
     public string? Body { get; set; }
-    public Guid FileId { get; set; }
+    public Guid? FileId { get; set; }
+    [ForeignKey(nameof(FileId))]
+    public FileDb? FileDb { get; set; }
     [Required]
     public bool State { get; set; }
     [Required]

@@ -16,8 +16,7 @@ public class RefreshToken
     public DateTime ExpirationDate { get; set; }
     [Required]
     public bool isExpired { get; set; }
-    [Required]
-    public DateTime ExpiredAt { get; set; }
+    public DateTime? ExpiredAt { get; set; }
     [Required]
     public Guid UserId { get; set; }
     [ForeignKey(nameof(UserId))]

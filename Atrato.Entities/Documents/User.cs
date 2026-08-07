@@ -35,4 +35,5 @@ public class User
     public ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
     public ICollection<WorkStation> WorkStations { get; set; } = new List<WorkStation>();
+    public ICollection<ChangeHistory> ChangesHistory { get; set; } = new List<ChangeHistory>();
 }
