@@ -13,7 +13,7 @@ public class NewsAuditCreateCommand : INewsAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(NewsAuditCreateRequest request)
+    public Task Execute(NewsAuditCreateRequest request)
     {
         NewsAudit doc = new()
         {
@@ -31,6 +31,7 @@ public class NewsAuditCreateCommand : INewsAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

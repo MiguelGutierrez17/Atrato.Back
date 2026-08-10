@@ -13,7 +13,7 @@ public class AddressAuditCreateCommand : IAddressAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(AddressAuditCreateRequest request)
+    public Task Execute(AddressAuditCreateRequest request)
     {
         AddressAudit doc = new()
         {
@@ -30,6 +30,7 @@ public class AddressAuditCreateCommand : IAddressAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

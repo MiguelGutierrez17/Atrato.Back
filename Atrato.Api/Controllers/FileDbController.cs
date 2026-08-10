@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Atrato.Api.Controllers;
 
 [ApiController]
-[Route("{EnterpriseId:Guid}/{UserId:Guid}/[controller]")]
+[Route("{enterpriseId:Guid}/[controller]")]
 public class FileDbController : ControllerBase
 {
     private readonly IFileDbService _service;
@@ -34,17 +34,17 @@ public class FileDbController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Post(FileDbCreateRequest request, Guid userId)
+    public async Task<IActionResult> Post(FileDbCreateRequest request)
     {
-        var response = await _service.Post(request, userId);
+        var response = await _service.Post(request, User.UserId());
         return Ok(response);
     }
 
     [Authorize]
     [HttpPut]
-    public async Task<IActionResult> Put(FileDbUpdateRequest request, Guid userId)
+    public async Task<IActionResult> Put(FileDbUpdateRequest request)
     {
-        var response = await _service.Put(request, userId);
+        var response = await _service.Put(request, User.UserId());
         return Ok(response);
     }
 }

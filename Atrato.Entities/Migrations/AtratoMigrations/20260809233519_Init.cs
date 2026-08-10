@@ -86,16 +86,16 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TimeZone",
+                name: "TimeZoneData",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Description = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MinutesToUtc = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TimeZone", x => x.Id);
+                    table.PrimaryKey("PK_TimeZoneData", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,8 +213,12 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Code = table.Column<int>(type: "int", nullable: false),
-                    State = table.Column<bool>(type: "bit", nullable: false)
+                    Code = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    State = table.Column<bool>(type: "bit", nullable: false),
+                    NumberAttempts = table.Column<int>(type: "int", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UsedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -232,11 +236,11 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     isExpired = table.Column<bool>(type: "bit", nullable: false),
-                    ExpiredAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiredAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -244,48 +248,6 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     table.PrimaryKey("PK_RefreshToken", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RefreshToken_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Reservation",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ReservationStateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ReservationTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WorkStationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CancelByExpireTime = table.Column<bool>(type: "bit", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
-                    CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IdempotencyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reservation", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Reservation_ReservationState_ReservationStateId",
-                        column: x => x.ReservationStateId,
-                        principalTable: "ReservationState",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Reservation_ReservationType_ReservationTypeId",
-                        column: x => x.ReservationTypeId,
-                        principalTable: "ReservationType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Reservation_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
@@ -304,8 +266,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     Picture = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CityId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TimeZoneId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ShiftStart = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ShiftEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ShiftStart = table.Column<int>(type: "int", nullable: false),
+                    ShiftEnd = table.Column<int>(type: "int", nullable: false),
                     State = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -318,9 +280,9 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Enterprise_TimeZone_TimeZoneId",
+                        name: "FK_Enterprise_TimeZoneData_TimeZoneId",
                         column: x => x.TimeZoneId,
-                        principalTable: "TimeZone",
+                        principalTable: "TimeZoneData",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -405,6 +367,12 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                         principalTable: "UserAction",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ChangeHistory_User_ActionUser",
+                        column: x => x.ActionUser,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -443,7 +411,7 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     State = table.Column<bool>(type: "bit", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -456,6 +424,12 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                         name: "FK_News_Enterprise_EnterpriseId",
                         column: x => x.EnterpriseId,
                         principalTable: "Enterprise",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_News_FileDb_FileId",
+                        column: x => x.FileId,
+                        principalTable: "FileDb",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -652,6 +626,54 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reservation",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReservationStateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReservationTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WorkStationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CancelByExpireTime = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    CheckInDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CheckOutDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IdempotencyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reservation", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reservation_ReservationState_ReservationStateId",
+                        column: x => x.ReservationStateId,
+                        principalTable: "ReservationState",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reservation_ReservationType_ReservationTypeId",
+                        column: x => x.ReservationTypeId,
+                        principalTable: "ReservationType",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reservation_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reservation_WorkStation_WorkStationId",
+                        column: x => x.WorkStationId,
+                        principalTable: "WorkStation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RolWorkStation",
                 columns: table => new
                 {
@@ -774,6 +796,11 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                 column: "UsersId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ChangeHistory_ActionUser",
+                table: "ChangeHistory",
+                column: "ActionUser");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ChangeHistory_EnterpriseId",
                 table: "ChangeHistory",
                 column: "EnterpriseId");
@@ -837,6 +864,11 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                 name: "IX_News_EnterpriseId",
                 table: "News",
                 column: "EnterpriseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_News_FileId",
+                table: "News",
+                column: "FileId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notification_EnterpriseId",
@@ -1042,7 +1074,7 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                 name: "City");
 
             migrationBuilder.DropTable(
-                name: "TimeZone");
+                name: "TimeZoneData");
 
             migrationBuilder.DropTable(
                 name: "Country");

@@ -29,9 +29,9 @@ public class Enterprise
     [ForeignKey(nameof(TimeZoneId))]
     public TimeZoneData TimeZoneData { get; set; }
     [Required]
-    public DateTime ShiftStart { get; set; }
+    public int ShiftStart { get; set; }
     [Required]
-    public DateTime ShiftEnd { get; set; }
+    public int ShiftEnd { get; set; }
     [Required]
     public bool State { get; set; }
     public ICollection<Address> Addresses { get; set; } = new List<Address>();

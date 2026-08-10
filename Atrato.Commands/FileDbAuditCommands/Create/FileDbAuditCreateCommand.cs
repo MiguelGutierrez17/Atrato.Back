@@ -13,7 +13,7 @@ public class FileDbAuditCreateCommand : IFileDbAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(FileDbAuditCreateRequest request)
+    public Task Execute(FileDbAuditCreateRequest request)
     {
         FileDbAudit doc = new()
         {
@@ -31,6 +31,7 @@ public class FileDbAuditCreateCommand : IFileDbAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

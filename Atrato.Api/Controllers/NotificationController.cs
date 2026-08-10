@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Atrato.Api.Controllers;
 
 [ApiController]
-[Route("{EnterpriseId:Guid}/{UserId:Guid}/[controller]")]
+[Route("{enterpriseId:Guid}/[controller]")]
 public class NotificationController : ControllerBase
 {
     private readonly INotificationService _service;
@@ -50,25 +50,25 @@ public class NotificationController : ControllerBase
 
     [Authorize]
     [HttpGet("ByUserEnterprise")]
-    public async Task<IActionResult> ByUserEnterprise(Guid userId, Guid enterpriseId, CancellationToken cancellationToken)
+    public async Task<IActionResult> ByUserEnterprise(Guid enterpriseId, CancellationToken cancellationToken)
     {
-        var response = await _service.ByUserEnterprise(userId, enterpriseId, cancellationToken);
+        var response = await _service.ByUserEnterprise(User.UserId(), enterpriseId, cancellationToken);
         return Ok(response);
     }
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Post(NotificationCreateRequest request, Guid userId)
+    public async Task<IActionResult> Post(NotificationCreateRequest request)
     {
-        var response = await _service.Post(request, userId);
+        var response = await _service.Post(request, User.UserId());
         return Ok(response);
     }
 
     [Authorize]
     [HttpPut]
-    public async Task<IActionResult> Put(NotificationUpdateRequest request, Guid userId)
+    public async Task<IActionResult> Put(NotificationUpdateRequest request)
     {
-        var response = await _service.Put(request, userId);
+        var response = await _service.Put(request, User.UserId());
         return Ok(response);
     }
 }

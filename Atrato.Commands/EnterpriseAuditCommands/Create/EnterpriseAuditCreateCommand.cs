@@ -13,7 +13,7 @@ public class EnterpriseAuditCreateCommand : IEnterpriseAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(EnterpriseAuditCreateRequest request)
+    public Task Execute(EnterpriseAuditCreateRequest request)
     {
         EnterpriseAudit doc = new()
         {
@@ -34,6 +34,7 @@ public class EnterpriseAuditCreateCommand : IEnterpriseAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

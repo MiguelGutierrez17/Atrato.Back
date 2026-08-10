@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Atrato.Api.Controllers;
 
 [ApiController]
-[Route("{EnterpriseId:Guid}/{UserId:Guid}/[controller]")]
+[Route("[controller]")]
 public class EnterpriseController : ControllerBase
 {
     private readonly IEnterpriseService _service;
@@ -34,17 +34,17 @@ public class EnterpriseController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Post(EnterpriseCreateRequest request, Guid userId)
+    public async Task<IActionResult> Post(EnterpriseCreateRequest request)
     {
-        var response = await _service.Post(request, userId);
+        var response = await _service.Post(request, User.UserId());
         return Ok(response);
     }
 
     [Authorize]
     [HttpPut]
-    public async Task<IActionResult> Put(EnterpriseUpdateRequest request, Guid userId)
+    public async Task<IActionResult> Put(EnterpriseUpdateRequest request)
     {
-        var response = await _service.Put(request, userId);
+        var response = await _service.Put(request, User.UserId());
         return Ok(response);
     }
 }

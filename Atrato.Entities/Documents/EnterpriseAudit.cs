@@ -15,8 +15,8 @@ public class EnterpriseAudit
     public string? Picture { get; set; }
     public Guid CityId { get; set; }
     public Guid TimeZoneId { get; set; }
-    public DateTime ShiftStart { get; set; }
-    public DateTime ShiftEnd { get; set; }
+    public int ShiftStart { get; set; }
+    public int ShiftEnd { get; set; }
     public bool State { get; set; }
     public Guid ItemId { get; set; }
     public Guid UserChange { get; set; }

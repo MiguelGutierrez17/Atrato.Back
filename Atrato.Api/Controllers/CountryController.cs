@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Atrato.Api.Controllers;
 
 [ApiController]
-[Route("{EnterpriseId:Guid}/{UserId:Guid}/[controller]")]
+[Route("{enterpriseId:Guid}/[controller]")]
 public class CountryController : ControllerBase
 {
     private readonly ICountryService _service;

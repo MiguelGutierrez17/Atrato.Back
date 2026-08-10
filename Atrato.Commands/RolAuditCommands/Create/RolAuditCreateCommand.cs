@@ -13,7 +13,7 @@ public class RolAuditCreateCommand : IRolAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(RolAuditCreateRequest request)
+    public Task Execute(RolAuditCreateRequest request)
     {
         RolAudit doc = new()
         {
@@ -28,6 +28,7 @@ public class RolAuditCreateCommand : IRolAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

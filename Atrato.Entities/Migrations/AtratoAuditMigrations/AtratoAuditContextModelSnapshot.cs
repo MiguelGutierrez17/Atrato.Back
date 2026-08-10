@@ -137,11 +137,11 @@ namespace Atrato.Entities.Migrations.AtratoAuditMigrations
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ShiftEnd")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ShiftEnd")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("ShiftStart")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ShiftStart")
+                        .HasColumnType("int");
 
                     b.Property<bool>("State")
                         .HasColumnType("bit");

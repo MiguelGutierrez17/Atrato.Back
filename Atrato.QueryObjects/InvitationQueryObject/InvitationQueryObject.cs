@@ -94,6 +94,7 @@ public class InvitationQueryObject : IInvitationQueryObject
         var response =
             from i in _query.AsNoTracking()
             join u in _context.User on i.UserId equals u.Id
+            orderby i.CreationDate descending
             select new InvitationQueryData
             {
                 Id = i.Id,

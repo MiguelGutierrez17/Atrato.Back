@@ -13,7 +13,7 @@ public class Invitation
     [ForeignKey(nameof(UserId))]
     public User User { get; set; }
     [Required]
-    [MaxLength(6)]
+    [MaxLength(64)]
     public string Code { get; set; }
     [Required]
     public bool State { get; set; }

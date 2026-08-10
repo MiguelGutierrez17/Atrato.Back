@@ -13,7 +13,7 @@ public class NotificationAuditCreateCommand : INotificationAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(NotificationAuditCreateRequest request)
+    public Task Execute(NotificationAuditCreateRequest request)
     {
         NotificationAudit doc = new()
         {
@@ -34,6 +34,7 @@ public class NotificationAuditCreateCommand : INotificationAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

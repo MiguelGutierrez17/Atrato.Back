@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Atrato.Api.Controllers;
 
 [ApiController]
-[Route("{EnterpriseId:Guid}/{UserId:Guid}/[controller]")]
+[Route("{enterpriseId:Guid}/[controller]")]
 public class UserActionController : ControllerBase
 {
     private readonly IUserActionService _service;

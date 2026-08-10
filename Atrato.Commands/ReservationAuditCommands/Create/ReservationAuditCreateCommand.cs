@@ -13,7 +13,7 @@ public class ReservationAuditCreateCommand : IReservationAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(ReservationAuditCreateRequest request)
+    public Task Execute(ReservationAuditCreateRequest request)
     {
         ReservationAudit doc = new()
         {
@@ -37,6 +37,7 @@ public class ReservationAuditCreateCommand : IReservationAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

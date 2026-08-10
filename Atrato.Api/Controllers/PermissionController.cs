@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Atrato.Api.Controllers;
 
 [ApiController]
-[Route("{EnterpriseId:Guid}/{UserId:Guid}/[controller]")]
+[Route("{enterpriseId:Guid}/[controller]")]
 public class PermissionController : ControllerBase
 {
     private readonly IPermissionService _service;
@@ -34,17 +34,17 @@ public class PermissionController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Post(PermissionCreateRequest request, Guid userId)
+    public async Task<IActionResult> Post(PermissionCreateRequest request)
     {
-        var response = await _service.Post(request, userId);
+        var response = await _service.Post(request, User.UserId());
         return Ok(response);
     }
 
     [Authorize]
     [HttpPut]
-    public async Task<IActionResult> Put(PermissionUpdateRequest request, Guid userId)
+    public async Task<IActionResult> Put(PermissionUpdateRequest request)
     {
-        var response = await _service.Put(request, userId);
+        var response = await _service.Put(request, User.UserId());
         return Ok(response);
     }
 }

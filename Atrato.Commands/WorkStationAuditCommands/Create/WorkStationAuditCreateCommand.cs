@@ -13,7 +13,7 @@ public class WorkStationAuditCreateCommand : IWorkStationAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(WorkStationAuditCreateRequest request)
+    public Task Execute(WorkStationAuditCreateRequest request)
     {
         WorkStationAudit doc = new()
         {
@@ -30,6 +30,7 @@ public class WorkStationAuditCreateCommand : IWorkStationAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

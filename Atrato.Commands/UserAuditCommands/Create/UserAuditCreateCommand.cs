@@ -13,7 +13,7 @@ public class UserAuditCreateCommand : IUserAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(UserAuditCreateRequest request)
+    public Task Execute(UserAuditCreateRequest request)
     {
         UserAudit doc = new()
         {
@@ -31,6 +31,7 @@ public class UserAuditCreateCommand : IUserAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

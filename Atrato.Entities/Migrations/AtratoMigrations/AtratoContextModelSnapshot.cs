@@ -216,11 +216,11 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ShiftEnd")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ShiftEnd")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("ShiftStart")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ShiftStart")
+                        .HasColumnType("int");
 
                     b.Property<bool>("State")
                         .HasColumnType("bit");
@@ -370,8 +370,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -528,7 +528,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");

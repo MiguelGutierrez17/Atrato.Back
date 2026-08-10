@@ -13,7 +13,7 @@ public class TicketAuditCreateCommand : ITicketAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(TicketAuditCreateRequest request)
+    public Task Execute(TicketAuditCreateRequest request)
     {
         TicketAudit doc = new()
         {
@@ -30,6 +30,7 @@ public class TicketAuditCreateCommand : ITicketAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

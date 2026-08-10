@@ -34,6 +34,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+    options.MapInboundClaims = false;
 
     options.TokenValidationParameters = new TokenValidationParameters()
     {
@@ -49,6 +50,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<ErrorHandling>();
+builder.Services.AddScoped<UnitOfWork>();
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -56,7 +58,7 @@ builder.Services.AddRateLimiter(options =>
 
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknow_ip",
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown_ip",
             factory: _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 200,
@@ -65,14 +67,16 @@ builder.Services.AddRateLimiter(options =>
                 QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst
             }));
 
-    options.AddFixedWindowLimiter("Limited",
-        x =>
-        {
-            x.PermitLimit = 6;
-            x.Window = TimeSpan.FromMinutes(1);
-            x.QueueLimit = 0;
-            x.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
-        });
+    options.AddPolicy<string>("Limited", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown_ip",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 6,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst
+            }));
 });
 
 var app = builder.Build();
@@ -93,12 +97,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRateLimiter();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<ErrorHandling>();
 
-app.UseRateLimiter();
+app.UseMiddleware<UnitOfWork>();
+
 app.MapControllers();
 
 app.Run();

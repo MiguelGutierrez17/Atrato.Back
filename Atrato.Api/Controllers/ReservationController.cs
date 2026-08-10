@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Atrato.Api.Controllers;
 
 [ApiController]
-[Route("{EnterpriseId:Guid}/{UserId:Guid}/[controller]")]
+[Route("{enterpriseId:Guid}/[controller]")]
 public class ReservationController : ControllerBase
 {
     private readonly IReservationService _service;
@@ -66,17 +66,17 @@ public class ReservationController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Post(ReservationCreateRequest request, Guid userId)
+    public async Task<IActionResult> Post(ReservationCreateRequest request)
     {
-        var response = await _service.Post(request, userId);
+        var response = await _service.Post(request, User.UserId());
         return Ok(response);
     }
 
     [Authorize]
     [HttpPut]
-    public async Task<IActionResult> Put(ReservationUpdateRequest request, Guid userId)
+    public async Task<IActionResult> Put(ReservationUpdateRequest request)
     {
-        var response = await _service.Put(request, userId);
+        var response = await _service.Put(request, User.UserId());
         return Ok(response);
     }
 }

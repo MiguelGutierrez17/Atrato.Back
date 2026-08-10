@@ -13,7 +13,7 @@ public class AreaAuditCreateCommand : IAreaAuditCreateCommand
         _auditContext = auditContext;
     }
 
-    public async Task Execute(AreaAuditCreateRequest request)
+    public Task Execute(AreaAuditCreateRequest request)
     {
         AreaAudit doc = new()
         {
@@ -28,6 +28,7 @@ public class AreaAuditCreateCommand : IAreaAuditCreateCommand
         };
 
         _auditContext.Add(doc);
-        await _auditContext.SaveChangesAsync();
+
+        return Task.CompletedTask;
     }
 }

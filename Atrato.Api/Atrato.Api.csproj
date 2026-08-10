@@ -21,6 +21,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Using Include="Atrato.Api.Extensions" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Atrato.Entities\Atrato.Entities.csproj" />
       <ProjectReference Include="..\Atrato.Services\Atrato.Services.csproj" />
     </ItemGroup>

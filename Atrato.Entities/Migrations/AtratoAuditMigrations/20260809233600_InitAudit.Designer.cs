@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Atrato.Entities.Migrations.AtratoAuditMigrations
 {
     [DbContext(typeof(AtratoAuditContext))]
-    [Migration("20260801045537_AllTablesAudit")]
-    partial class AllTablesAudit
+    [Migration("20260809233600_InitAudit")]
+    partial class InitAudit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -140,11 +140,11 @@ namespace Atrato.Entities.Migrations.AtratoAuditMigrations
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ShiftEnd")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ShiftEnd")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("ShiftStart")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ShiftStart")
+                        .HasColumnType("int");
 
                     b.Property<bool>("State")
                         .HasColumnType("bit");
