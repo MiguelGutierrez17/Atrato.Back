@@ -15,7 +15,7 @@ public class EntityTypeService : IEntityTypeService
 
     public async Task<StandardResult<List<EntityTypeQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<EntityTypeQueryData>>()
         {
@@ -26,7 +26,7 @@ public class EntityTypeService : IEntityTypeService
 
     public async Task<StandardResult<EntityTypeQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<EntityTypeQueryData?>()
         {

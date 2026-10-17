@@ -15,7 +15,7 @@ public class WorkStationStateService : IWorkStationStateService
 
     public async Task<StandardResult<List<WorkStationStateQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<WorkStationStateQueryData>>()
         {
@@ -26,7 +26,7 @@ public class WorkStationStateService : IWorkStationStateService
 
     public async Task<StandardResult<WorkStationStateQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<WorkStationStateQueryData?>()
         {

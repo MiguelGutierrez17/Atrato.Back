@@ -24,7 +24,7 @@ public class InvitationService : IInvitationService
 
     public async Task<StandardResult<List<InvitationQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<InvitationQueryData>>()
         {
@@ -35,7 +35,7 @@ public class InvitationService : IInvitationService
 
     public async Task<StandardResult<InvitationQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<InvitationQueryData?>()
         {
@@ -46,7 +46,7 @@ public class InvitationService : IInvitationService
 
     public async Task<StandardResult<List<InvitationQueryData>>> ByUser(Guid userId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForUser(userId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForUser(userId).GetAll(cancellationToken);
 
         return new StandardResult<List<InvitationQueryData>>()
         {

@@ -24,7 +24,7 @@ public class RolService : IRolService
 
     public async Task<StandardResult<List<RolQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<RolQueryData>>()
         {
@@ -35,7 +35,7 @@ public class RolService : IRolService
 
     public async Task<StandardResult<RolQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<RolQueryData?>()
         {
@@ -46,7 +46,7 @@ public class RolService : IRolService
 
     public async Task<StandardResult<List<RolQueryData>>> ByEnterprise(Guid enterpriseId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForEnterprise(enterpriseId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForEnterprise(enterpriseId).GetAll(cancellationToken);
 
         return new StandardResult<List<RolQueryData>>()
         {

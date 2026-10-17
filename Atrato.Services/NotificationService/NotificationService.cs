@@ -24,7 +24,7 @@ public class NotificationService : INotificationService
 
     public async Task<StandardResult<List<NotificationQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<NotificationQueryData>>()
         {
@@ -35,7 +35,7 @@ public class NotificationService : INotificationService
 
     public async Task<StandardResult<NotificationQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<NotificationQueryData?>()
         {
@@ -46,7 +46,7 @@ public class NotificationService : INotificationService
 
     public async Task<StandardResult<List<NotificationQueryData>>> ByEnterprise(Guid enterpriseId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForEnterprise(enterpriseId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForEnterprise(enterpriseId).GetAll(cancellationToken);
 
         return new StandardResult<List<NotificationQueryData>>()
         {
@@ -57,7 +57,7 @@ public class NotificationService : INotificationService
 
     public async Task<StandardResult<List<NotificationQueryData>>> ByUser(Guid userId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForUser(userId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForUser(userId).GetAll(cancellationToken);
 
         return new StandardResult<List<NotificationQueryData>>()
         {
@@ -68,7 +68,7 @@ public class NotificationService : INotificationService
 
     public async Task<StandardResult<List<NotificationQueryData>>> ByUserEnterprise(Guid userId, Guid enterpriseId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForUser(userId).ForEnterprise(enterpriseId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForUser(userId).ForEnterprise(enterpriseId).GetAll(cancellationToken);
 
         return new StandardResult<List<NotificationQueryData>>()
         {

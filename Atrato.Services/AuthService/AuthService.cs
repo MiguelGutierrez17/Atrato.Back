@@ -1,18 +1,23 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.IO;
 using Atrato.Commands.InvitationCommands.Create;
 using Atrato.Commands.InvitationCommands.RegisterFailedAttempt;
 using Atrato.Commands.InvitationCommands.Update;
 using Atrato.Commands.RefreshTokenCommands.Create;
 using Atrato.Commands.RefreshTokenCommands.Update;
+using Atrato.Entities.Documents;
 using Atrato.Entities.DTO.Invitation;
 using Atrato.Entities.DTO.RefreshToken;
+using Atrato.Entities.DTO.User;
 using Atrato.Entities.SupportDTO;
 using Atrato.QueryObjects.InvitationQueryObject;
 using Atrato.QueryObjects.RefreshTokenQueryObject;
 using Atrato.QueryObjects.UserQueryObject;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -56,6 +61,29 @@ public class AuthService : IAuthService
     }
 
     private const int MaxAttempts = 5;
+    private static readonly TimeSpan RaceWindow = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan RefreshTokenLifetime = TimeSpan.FromDays(7);
+    private static readonly TimeSpan InvitationCodeLifetime = TimeSpan.FromMinutes(10);
+
+    private static readonly Expression<Func<User, LoginUserData>> LoginUserProjection = u => new LoginUserData
+    {
+        Id = u.Id,
+        Name = u.Name,
+        LastName = u.LastName,
+        Initials = u.Initials,
+        Email = u.Email,
+        Phone = u.Phone,
+        State = u.State,
+        isSuperAdmin = u.isSuperAdmin,
+        Enterprises = u.UserEnterprises
+            .Select(ue => new EnterpriseMembershipData
+            {
+                EnterpriseId = ue.EnterpriseId,
+                Enterprise = ue.Enterprise.Name,
+                IsAdminEnterprise = ue.IsAdminEnterprise,
+                ReservationsByMonth = ue.ReservationsByMonth
+            }).ToList()
+    };
 
     public async Task<StandardResult<bool>> RequestCode(CheckUserRequest request, CancellationToken cancellationToken)
     {
@@ -92,11 +120,17 @@ public class AuthService : IAuthService
 
         var plainCode = CreateCode();
 
+        string path = "code.txt";
+        string content = plainCode;
+        
+        File.WriteAllText(path, content);
+        Console.WriteLine($"Archivo en {Path.GetFullPath(path)}");
+
         var createRequestInvitation = new InvitationCreateRequest()
         {
             UserId = user.Id,
             CreationDate = DateTime.UtcNow,
-            ExpirationDate = DateTime.UtcNow.AddMinutes(10),
+            ExpirationDate = DateTime.UtcNow.Add(InvitationCodeLifetime),
             Code = HashSecret(plainCode),
             NumberAttempts = 0,
             UsedAt = null,
@@ -116,8 +150,12 @@ public class AuthService : IAuthService
     {
         AuthToken response = new();
 
-        var user = await _userQueryObject.Clear().ForEmail(request.Email).ForState(true)
-            .FirstOrDefault(cancellationToken);
+        var user = await _userQueryObject.Clear()
+            .ForEmail(request.Email)
+            .ForState(true)
+            .Query()
+            .Select(LoginUserProjection)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (user == null)
         {
@@ -173,27 +211,7 @@ public class AuthService : IAuthService
                 Data = response,
             };
         }
-
-        // Multi-dispositivo: un login nuevo ya no invalida las sesiones de los otros dispositivos.
-        // var currentRefreshTokens = await _refreshTokenQueryObject.Clear().ForUser(user.Id).ForExpired(false)
-        //     .GetAll(cancellationToken);
-        //
-        // foreach (var refreshToken in currentRefreshTokens)
-        // {
-        //     var updateRequestRefreshToken = new RefreshTokenUpdateRequest()
-        //     {
-        //         Id = refreshToken.Id,
-        //         CreationDate = refreshToken.CreationDate,
-        //         ExpirationDate = refreshToken.ExpirationDate,
-        //         Token = refreshToken.Token,
-        //         UserId = user.Id,
-        //         ExpiredAt = DateTime.UtcNow,
-        //         isExpired = true
-        //     };
-        //
-        //     await _refreshTokenUpdateCommand.Execute(updateRequestRefreshToken, user.Id);
-        // }
-
+        
         var updateRequestInvitation = new InvitationUpdateRequest()
         {
             Code = code.Code,
@@ -210,12 +228,13 @@ public class AuthService : IAuthService
 
         response.Token = GenerateToken(user.Id, user.Email);
         response.RefreshToken = GenerateRefreshToken();
+        response.User = user;
 
         var createRequestRefreshToken = new RefreshTokenCreateRequest()
         {
             UserId = user.Id,
             CreationDate = DateTime.UtcNow,
-            ExpirationDate = DateTime.UtcNow.AddDays(7),
+            ExpirationDate = DateTime.UtcNow.Add(RefreshTokenLifetime),
             isExpired = false,
             ExpiredAt = null,
             Token = HashSecret(response.RefreshToken),
@@ -253,8 +272,12 @@ public class AuthService : IAuthService
             };
         }
 
-        var user = await _userQueryObject.Clear().ForId(userId).ForState(true)
-            .FirstOrDefault(cancellationToken);
+        var user = await _userQueryObject.Clear()
+            .ForId(userId)
+            .ForState(true)
+            .Query()
+            .Select(LoginUserProjection)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (user == null)
         {
@@ -278,26 +301,14 @@ public class AuthService : IAuthService
             };
         }
 
-        // Reutilización de un token ya rotado: alguien tiene una copia, así que se cierran todas las sesiones.
         if (existingRefreshToken.isExpired)
         {
-            var currentRefreshTokens = await _refreshTokenQueryObject.Clear().ForUser(userId).ForExpired(false)
-                .GetAll(cancellationToken);
+            var isRace = existingRefreshToken.ExpiredAt is { } rotatedAt
+                         && DateTime.UtcNow - rotatedAt < RaceWindow;
 
-            foreach (var currentRefreshToken in currentRefreshTokens)
+            if (!isRace)
             {
-                var updateRequestCurrentRefreshToken = new RefreshTokenUpdateRequest()
-                {
-                    CreationDate = currentRefreshToken.CreationDate,
-                    ExpirationDate = currentRefreshToken.ExpirationDate,
-                    ExpiredAt = DateTime.UtcNow,
-                    Id = currentRefreshToken.Id,
-                    isExpired = true,
-                    Token = currentRefreshToken.Token,
-                    UserId = userId,
-                };
-
-                await _refreshTokenUpdateCommand.Execute(updateRequestCurrentRefreshToken, userId);
+                await ExpireAllRefreshTokens(userId, cancellationToken);
             }
 
             return new StandardResult<AuthToken>()
@@ -336,7 +347,7 @@ public class AuthService : IAuthService
         {
             UserId = userId,
             CreationDate = DateTime.UtcNow,
-            ExpirationDate = DateTime.UtcNow.AddDays(7),
+            ExpirationDate = DateTime.UtcNow.Add(RefreshTokenLifetime),
             Token = HashSecret(newRefreshToken),
             ExpiredAt = null,
             isExpired = false
@@ -346,12 +357,96 @@ public class AuthService : IAuthService
 
         response.RefreshToken = newRefreshToken;
         response.Token = newToken;
+        response.User = user;
 
         return new StandardResult<AuthToken>()
         {
             Success = true,
             Data = response,
         };
+    }
+
+    public async Task<StandardResult<LoginUserData?>> RehydrateUser(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await _userQueryObject.Clear()
+            .ForId(userId)
+            .ForState(true)
+            .Query()
+            .Select(LoginUserProjection)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return new StandardResult<LoginUserData?>()
+        {
+            Success = user != null,
+            Data = user,
+        };
+    }
+
+    public async Task<StandardResult<bool>> Logout(LogoutRequest request, CancellationToken cancellationToken)
+    {
+        var existingRefreshToken = await _refreshTokenQueryObject.Clear()
+            .ForToken(HashSecret(request.RefreshToken))
+            .FirstOrDefault(cancellationToken);
+
+        if (existingRefreshToken == null || existingRefreshToken.isExpired)
+        {
+            return new StandardResult<bool>()
+            {
+                Success = true,
+                Data = true,
+            };
+        }
+
+        var updateRequestRefreshToken = new RefreshTokenUpdateRequest()
+        {
+            Id = existingRefreshToken.Id,
+            CreationDate = existingRefreshToken.CreationDate,
+            ExpirationDate = existingRefreshToken.ExpirationDate,
+            Token = existingRefreshToken.Token,
+            UserId = existingRefreshToken.UserId,
+            ExpiredAt = DateTime.UtcNow,
+            isExpired = true,
+        };
+
+        await _refreshTokenUpdateCommand.Execute(updateRequestRefreshToken, existingRefreshToken.UserId);
+
+        return new StandardResult<bool>()
+        {
+            Success = true,
+            Data = true,
+        };
+    }
+
+    public async Task<StandardResult<bool>> LogoutAll(Guid userId, CancellationToken cancellationToken)
+    {
+        await ExpireAllRefreshTokens(userId, cancellationToken);
+
+        return new StandardResult<bool>()
+        {
+            Success = true,
+            Data = true,
+        };
+    }
+
+    private async Task ExpireAllRefreshTokens(Guid userId, CancellationToken cancellationToken)
+    {
+        var currentRefreshTokens = await _refreshTokenQueryObject.Clear().ForUser(userId).ForExpired(false).GetAll(cancellationToken);
+
+        foreach (var currentRefreshToken in currentRefreshTokens)
+        {
+            var updateRequestCurrentRefreshToken = new RefreshTokenUpdateRequest()
+            {
+                CreationDate = currentRefreshToken.CreationDate,
+                ExpirationDate = currentRefreshToken.ExpirationDate,
+                ExpiredAt = DateTime.UtcNow,
+                Id = currentRefreshToken.Id,
+                isExpired = true,
+                Token = currentRefreshToken.Token,
+                UserId = userId,
+            };
+
+            await _refreshTokenUpdateCommand.Execute(updateRequestCurrentRefreshToken, userId);
+        }
     }
 
     private static string CreateCode()

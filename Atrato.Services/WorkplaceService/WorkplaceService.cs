@@ -24,7 +24,7 @@ public class WorkplaceService : IWorkplaceService
 
     public async Task<StandardResult<List<WorkplaceQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<WorkplaceQueryData>>()
         {
@@ -35,7 +35,7 @@ public class WorkplaceService : IWorkplaceService
 
     public async Task<StandardResult<WorkplaceQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<WorkplaceQueryData?>()
         {
@@ -46,7 +46,7 @@ public class WorkplaceService : IWorkplaceService
 
     public async Task<StandardResult<List<WorkplaceQueryData>>> ByEnterprise(Guid enterpriseId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForEnterprise(enterpriseId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForEnterprise(enterpriseId).GetAll(cancellationToken);
 
         return new StandardResult<List<WorkplaceQueryData>>()
         {

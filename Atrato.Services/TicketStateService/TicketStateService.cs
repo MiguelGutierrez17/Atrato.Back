@@ -15,7 +15,7 @@ public class TicketStateService : ITicketStateService
 
     public async Task<StandardResult<List<TicketStateQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<TicketStateQueryData>>()
         {
@@ -26,7 +26,7 @@ public class TicketStateService : ITicketStateService
 
     public async Task<StandardResult<TicketStateQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<TicketStateQueryData?>()
         {

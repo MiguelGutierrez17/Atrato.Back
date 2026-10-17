@@ -15,7 +15,7 @@ public class UserActionService : IUserActionService
 
     public async Task<StandardResult<List<UserActionQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<UserActionQueryData>>()
         {
@@ -26,7 +26,7 @@ public class UserActionService : IUserActionService
 
     public async Task<StandardResult<UserActionQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<UserActionQueryData?>()
         {

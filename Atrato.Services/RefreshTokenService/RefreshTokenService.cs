@@ -24,7 +24,7 @@ public class RefreshTokenService : IRefreshTokenService
 
     public async Task<StandardResult<List<RefreshTokenQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<RefreshTokenQueryData>>()
         {
@@ -35,7 +35,7 @@ public class RefreshTokenService : IRefreshTokenService
 
     public async Task<StandardResult<RefreshTokenQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<RefreshTokenQueryData?>()
         {
@@ -46,7 +46,7 @@ public class RefreshTokenService : IRefreshTokenService
 
     public async Task<StandardResult<List<RefreshTokenQueryData>>> ByUser(Guid userId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForUser(userId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForUser(userId).GetAll(cancellationToken);
 
         return new StandardResult<List<RefreshTokenQueryData>>()
         {

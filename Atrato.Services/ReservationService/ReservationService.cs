@@ -24,7 +24,7 @@ public class ReservationService : IReservationService
 
     public async Task<StandardResult<List<ReservationQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<ReservationQueryData>>()
         {
@@ -35,7 +35,7 @@ public class ReservationService : IReservationService
 
     public async Task<StandardResult<ReservationQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<ReservationQueryData?>()
         {
@@ -46,7 +46,7 @@ public class ReservationService : IReservationService
 
     public async Task<StandardResult<List<ReservationQueryData>>> ByEnterprise(Guid enterpriseId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForEnterprise(enterpriseId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForEnterprise(enterpriseId).GetAll(cancellationToken);
 
         return new StandardResult<List<ReservationQueryData>>()
         {
@@ -57,7 +57,7 @@ public class ReservationService : IReservationService
 
     public async Task<StandardResult<List<ReservationQueryData>>> ByWorkplace(Guid workplaceId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForWorkplace(workplaceId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForWorkplace(workplaceId).GetAll(cancellationToken);
 
         return new StandardResult<List<ReservationQueryData>>()
         {
@@ -68,7 +68,7 @@ public class ReservationService : IReservationService
 
     public async Task<StandardResult<List<ReservationQueryData>>> ByWorkStation(Guid workStationId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForWorkStation(workStationId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForWorkStation(workStationId).GetAll(cancellationToken);
 
         return new StandardResult<List<ReservationQueryData>>()
         {
@@ -79,7 +79,7 @@ public class ReservationService : IReservationService
 
     public async Task<StandardResult<List<ReservationQueryData>>> ByUser(Guid userId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForUser(userId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForUser(userId).GetAll(cancellationToken);
 
         return new StandardResult<List<ReservationQueryData>>()
         {

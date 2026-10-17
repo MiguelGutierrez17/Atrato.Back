@@ -59,6 +59,11 @@ public class UserQueryObject : IUserQueryObject
         return this;
     }
 
+    public IQueryable<User> Query()
+    {
+        return _query.AsNoTracking();
+    }
+
     public async Task<List<UserQueryData>> GetAll(CancellationToken cancellationToken)
     {
         var response =

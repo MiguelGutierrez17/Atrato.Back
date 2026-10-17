@@ -24,7 +24,7 @@ public class ChangeHistoryService : IChangeHistoryService
 
     public async Task<StandardResult<List<ChangeHistoryQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<ChangeHistoryQueryData>>()
         {
@@ -35,7 +35,7 @@ public class ChangeHistoryService : IChangeHistoryService
 
     public async Task<StandardResult<ChangeHistoryQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<ChangeHistoryQueryData?>()
         {
@@ -46,7 +46,7 @@ public class ChangeHistoryService : IChangeHistoryService
 
     public async Task<StandardResult<List<ChangeHistoryQueryData>>> ByEnterprise(Guid enterpriseId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForEnterprise(enterpriseId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForEnterprise(enterpriseId).GetAll(cancellationToken);
 
         return new StandardResult<List<ChangeHistoryQueryData>>()
         {

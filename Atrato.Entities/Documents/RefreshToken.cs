@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Atrato.Entities.Documents;
 
+[Index(nameof(Token))]
 public class RefreshToken
 {
     [Key]

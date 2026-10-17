@@ -15,7 +15,7 @@ public class GuideService : IGuideService
 
     public async Task<StandardResult<List<GuideQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<GuideQueryData>>()
         {
@@ -26,7 +26,7 @@ public class GuideService : IGuideService
 
     public async Task<StandardResult<GuideQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<GuideQueryData?>()
         {
@@ -37,7 +37,7 @@ public class GuideService : IGuideService
 
     public async Task<StandardResult<List<GuideQueryData>>> ByEnterprise(Guid enterpriseId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForEnterprise(enterpriseId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForEnterprise(enterpriseId).GetAll(cancellationToken);
 
         return new StandardResult<List<GuideQueryData>>()
         {

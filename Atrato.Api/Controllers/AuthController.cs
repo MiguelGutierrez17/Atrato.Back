@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Atrato.Entities.SupportDTO;
 using Atrato.Services.AuthService;
 using Microsoft.AspNetCore.Authorization;
@@ -53,6 +55,46 @@ public class AuthController : ControllerBase
             return Unauthorized(response);
         }
 
+        return Ok(response);
+    }
+
+    [HttpGet("RehydrateUser")]
+    [Authorize]
+    public async Task<IActionResult> RehydrateUser(CancellationToken cancellationToken)
+    {
+        if (!Guid.TryParse(User.FindFirstValue(JwtRegisteredClaimNames.Sub), out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var response = await _service.RehydrateUser(userId, cancellationToken);
+
+        if (!response.Success)
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, response);
+        }
+
+        return Ok(response);
+    }
+
+    [HttpPost("Logout")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Logout(LogoutRequest request, CancellationToken cancellationToken)
+    {
+        var response = await _service.Logout(request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpPost("LogoutAll")]
+    [Authorize]
+    public async Task<IActionResult> LogoutAll(CancellationToken cancellationToken)
+    {
+        if (!Guid.TryParse(User.FindFirstValue(JwtRegisteredClaimNames.Sub), out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var response = await _service.LogoutAll(userId, cancellationToken);
         return Ok(response);
     }
 }

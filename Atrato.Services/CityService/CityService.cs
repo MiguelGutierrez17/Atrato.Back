@@ -15,7 +15,7 @@ public class CityService : ICityService
 
     public async Task<StandardResult<List<CityQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<CityQueryData>>()
         {
@@ -26,7 +26,7 @@ public class CityService : ICityService
 
     public async Task<StandardResult<CityQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<CityQueryData?>()
         {
@@ -37,7 +37,7 @@ public class CityService : ICityService
 
     public async Task<StandardResult<List<CityQueryData>>> ByCountry(Guid countryId, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForCountry(countryId).GetAll(cancellationToken);
+        var response = await _queryObject.Clear().ForCountry(countryId).GetAll(cancellationToken);
 
         return new StandardResult<List<CityQueryData>>()
         {

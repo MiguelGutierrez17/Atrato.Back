@@ -24,7 +24,7 @@ public class FileDbService : IFileDbService
 
     public async Task<StandardResult<List<FileDbQueryData>>> GetAll(CancellationToken cancellationToken)
     {
-        var response = await _queryObject.GetAll(cancellationToken);
+        var response = await _queryObject.Clear().GetAll(cancellationToken);
 
         return new StandardResult<List<FileDbQueryData>>()
         {
@@ -35,7 +35,7 @@ public class FileDbService : IFileDbService
 
     public async Task<StandardResult<FileDbQueryData?>> ById(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _queryObject.ForId(id).FirstOrDefault(cancellationToken);
+        var response = await _queryObject.Clear().ForId(id).FirstOrDefault(cancellationToken);
 
         return new StandardResult<FileDbQueryData?>()
         {

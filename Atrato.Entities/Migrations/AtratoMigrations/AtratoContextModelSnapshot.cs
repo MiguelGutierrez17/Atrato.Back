@@ -539,6 +539,8 @@ namespace Atrato.Entities.Migrations.AtratoMigrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Token");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshToken");
